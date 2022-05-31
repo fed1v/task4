@@ -13,7 +13,7 @@ import kotlin.math.sin
 
 class ClockView(
     context: Context,
-    attrs: AttributeSet
+    private val attrs: AttributeSet
 ) : View(context, attrs) {
 
     private var currentSecond: Int = 0
@@ -37,9 +37,9 @@ class ClockView(
     private var centerY: Float = 0F
     private var radius: Float = 0F
 
-    private var secondHandLength = radius * 0.7F
-    private var minuteHandLength = radius * 0.5F
-    private var hourHandLength = radius * 0.3F
+    private var secondHandLength: Float = 0.0F
+    private var minuteHandLength: Float = 0.0F
+    private var hourHandLength: Float = 0.0F
 
     private var calendar = Calendar.getInstance()
 
@@ -53,9 +53,21 @@ class ClockView(
         paintMinute.strokeWidth = 12.0F
         paintHour.strokeWidth = 12.0F
 
-        paintSecond.color = Color.RED
-        paintMinute.color = Color.BLUE
-        paintHour.color = Color.GREEN
+        setUpAttributes()
+    }
+
+    private fun setUpAttributes() {
+        val xmlAttributes = context.theme.obtainStyledAttributes(attrs, R.styleable.ClockView, 0, 0)
+
+        paintSecond.color = xmlAttributes.getColor(R.styleable.ClockView_secondHandColor, DEFAULT_SECOND_HAND_COLOR)
+        paintMinute.color = xmlAttributes.getColor(R.styleable.ClockView_minuteHandColor, DEFAULT_MINUTE_HAND_COLOR)
+        paintHour.color = xmlAttributes.getColor(R.styleable.ClockView_hourHandColor, DEFAULT_HOUR_HAND_COLOR)
+
+        secondHandLength = xmlAttributes.getFloat(R.styleable.ClockView_secondHandSize, -123.0F)
+        minuteHandLength = xmlAttributes.getFloat(R.styleable.ClockView_minuteHandSize, -123.0F)
+        hourHandLength = xmlAttributes.getFloat(R.styleable.ClockView_hourHandSize, -123.0F)
+
+        xmlAttributes.recycle()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -65,9 +77,15 @@ class ClockView(
         centerY = height / 2.0F
         radius = min(width, height) * 0.45F
 
-        hourHandLength = radius * 0.55F
-        minuteHandLength = radius * 0.7F
-        secondHandLength = radius * 0.85F
+        if(hourHandLength == -123.0F){
+            hourHandLength =  radius * 0.55F
+        }
+        if(minuteHandLength == -123.0F){
+            minuteHandLength = radius * 0.7F
+        }
+        if(secondHandLength == -123.0F){
+            secondHandLength = radius * 0.85F
+        }
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -152,5 +170,11 @@ class ClockView(
         val x = centerX + secondHandLength * sin(angle)
         val y = centerY - secondHandLength * cos(angle)
         canvas.drawLine(centerX, centerY, x, y, paintSecond)
+    }
+
+    companion object {
+        const val DEFAULT_SECOND_HAND_COLOR = Color.RED
+        const val DEFAULT_MINUTE_HAND_COLOR = Color.BLUE
+        const val DEFAULT_HOUR_HAND_COLOR = Color.GREEN
     }
 }

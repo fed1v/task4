@@ -10,6 +10,12 @@
         android:id="@+id/clock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:secondHandColor="#7B1FA2"
+        app:minuteHandColor="#CDDC39"
+        app:hourHandColor="#FF9800"
+        app:secondHandSize="369"
+        app:minuteHandSize="246"
+        app:hourHandSize="123"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
